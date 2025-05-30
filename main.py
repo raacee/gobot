@@ -2,7 +2,7 @@ import numpy as np
 from collections import deque
 
 
-class Board():
+class Board:
     _mask = np.array(
         [
             [False, True, False],
@@ -13,53 +13,56 @@ class Board():
 
     def __init__(self, board_size:int):
         self._board_size: int = board_size
-        self._players: tuple[Player, Player] = (Player(1), Player(-1))
-        self._current_player_index: int = 1
-        self._current_player: Player = self._players[self._current_player_index]
         self._board: np.ndarray = np.array([[0] * self._board_size] * self._board_size)
+        self._current_player = 1
 
     def _is_over(self) -> bool:
-        return (self._board == 0).sum() == 0
+        return np.sum((self._board == 0)) == 0
 
     def _check_valid_case(self, x, y) -> bool:
         return self._board[x,y] == 0
 
     def game(self):
-        while self._is_over() != False:
-            print(f"Player {self.current_player}'s turn")
+        while not self._is_over():
+            print(f"Player {self._current_player}'s turn")
             print("Place a stone on a valid case")
-            valid_case: bool = False
-            while(valid_case == False):
-                x, y = self.current_player.choose_case()
-                valid_case = self._check_valid_case(x, y)
-            self._current_player_index *= -1
-            self.current_player = self._players[self._current_player_index]
+            x, y = choose_case()
 
             # Check captured stones
-            adversary_near_stones = []
+            neighbors = self._neighbors(x, y)
+            for x_n, y_n in neighbors:
+                if self._board[x_n, y_n] == self._current_player:
+                    raise NotImplementedError
+            self._current_player *= -1
+
             np.ma.masked_where(Board._mask, self._board)
 
         print("Game has ended")
-        print(f"Player {self._current_player_index} won !")
+        print(f"Player {self._current_player} won !")
 
-    def _flood_fill(self, x: int, y: int, res: set = set()) -> set[tuple[int, int]]:
-        # if all neighbors in res, return res
+    def _flood_fill(self, x: int, y: int) -> set[tuple[int, int]] | None:
+        queue = deque()
+        queue.append((x, y))
+        res = set()
 
+        while len(queue) > 0:
+            x, y = queue.popleft()
+            neighbors = self._neighbors(x, y)
+            if self._board[x, y] != self._current_player:
+                res.add((x,y))
+                queue.extend(neighbors)
+        return res
 
-        if self._board[x, y] == self._players[self._current_player_index * -1]:
-            res.add((x,y))
-            if x != 0:
-                self._flood_fill(x-1, y, res)
-            if x != self._board_size - 1:
-                self._flood_fill(x+1, y, res)
-            if y != 0:
-                self._flood_fill(x, y-1, res)
-            if y != self._board_size - 1:
-                self._flood_fill(x, y+1, res)
-        else:
-            res.add(None)
+    def _flood_fill_rec(self, x: int, y: int, res: set[tuple[int,int]]) -> None:
+        if self._board[x, y] != self._current_player:
+            res.add((x, y))
+            neighbors = self._neighbors(x, y)
+            if neighbors & res == neighbors:
+                return
+            for x_n, y_n in neighbors:
+                self._flood_fill_rec(x_n, y_n, res)
 
-    def _neighbors(self, x, y):
+    def _neighbors(self, x, y) -> set[tuple[int,int]]:
         neighbors = []
         if x != 0:
             neighbors.append((x-1, y))
@@ -70,16 +73,14 @@ class Board():
         if y != self._board_size - 1:
             neighbors.append((x, y+1))
 
+        return set(neighbors)
+
     def _display(self):
         print(self._board)
 
 
-class Player():
-    def __init__(self, n):
-        self.n = n
-
-    def choose_case(self) -> tuple[int, ...]:
-        return tuple(int(v) for v in input().split()[:2])
+def choose_case() -> tuple[int, ...]:
+    return tuple(int(v) for v in input().split()[:2])
 
 if __name__ == '__main__':
     board = Board(board_size=19)
