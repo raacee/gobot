@@ -26,10 +26,23 @@ class Board:
         while not self._is_over():
             print(f"Player {self._current_player}'s turn")
             print("Place a stone on a valid case")
-            x, y = choose_case()
-
-            # Check captured stones
+            x, y = Board.choose_case()
+            # Check if case induces suicide
             neighbors = self._neighbors(x, y)
+            suicide = all(map(lambda x: x != self._current_player, neighbors))
+            if suicide:
+                print("Chosen case is not valid, induces suicide")
+
+            # Check if case induces capture
+            for x_n, y_n in neighbors:
+                group_indices_tuples = self._flood_fill(x_n, y_n)
+                group = np.zeros(len(group_indices_tuples))
+                for t in group_indices_tuples:
+                    group.append(self._board[np.array(t)])
+                if 0 not in self._board[group]:
+                    group
+
+
             for x_n, y_n in neighbors:
                 if self._board[x_n, y_n] == self._current_player:
                     raise NotImplementedError
@@ -78,9 +91,9 @@ class Board:
     def _display(self):
         print(self._board)
 
-
-def choose_case() -> tuple[int, ...]:
-    return tuple(int(v) for v in input().split()[:2])
+    @staticmethod
+    def choose_case() -> tuple[int, ...]:
+        return tuple(int(v) for v in input().split()[:2])
 
 if __name__ == '__main__':
     board = Board(board_size=19)
