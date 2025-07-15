@@ -22,7 +22,7 @@ class Board:
         self._players = deque([Player(stone=Board.BLACK_STONE), Player(stone=Board.WHITE_STONE)])
 
     def _is_over(self) -> bool:
-        return np.sum((self._board == 0)) == 0
+        raise NotImplementedError
 
     def _check_valid_case(self, x, y) -> bool:
         return self._board[x,y] == 0
@@ -32,6 +32,7 @@ class Board:
             current_player: Player = self._players[0]
             print(f"Player {current_player}'s turn")
             print("Place a stone on a valid case")
+
             # Players chooses a stone
             x, y = current_player.choose_case()
 
@@ -51,7 +52,8 @@ class Board:
 
             # Check if case induces capture
             neighbors = self._neighbors_indices(x, y)
-            # Find a way to make computations faster by implementing a way that checks for already
+            # Find a way to make computations faster
+            # by implementing a way that checks for already
             # analysed index nodes
             # already_checked_stones_indices = set()
             for x_n, y_n in neighbors:
@@ -83,10 +85,13 @@ class Board:
         opposite_stone = stone * -1
         while len(queue) > 0:
             x, y = queue.popleft()
-            neighbors = self._neighbors_indices(x, y)
-            if self._board[x, y] != opposite_stone:
-                res.add((x,y))
-                queue.extend(neighbors)
+            if (x, y) not in res:
+                neighbors = self._neighbors_indices(x, y)
+                if self._board[x, y] != Board.EMPTY:
+                    res.add((x,y))
+                elif self._board[x, y] != opposite_stone:
+                    res.add((x,y))
+                    queue.extend(neighbors)
         return res
 
     def _flood_fill_rec(self, x: int, y: int, stone:int, res: set[tuple[int,int]] = set()) -> None:
