@@ -6,10 +6,11 @@ class Player(ABC):
         if stone not in [WHITE_STONE, BLACK_STONE]:
             raise ValueError("Stone must be black (-1) or white (1)")
         self.stone = stone
+        self.name = "White" if stone == WHITE_STONE else "Black"
 
     @abstractmethod
     def choose_case(self, board=None) -> tuple[int, ...]:
-        pass
+        raise NotImplementedError()
 
 class Human(Player):
     def choose_case(self, board=None) -> tuple[int, ...]:
