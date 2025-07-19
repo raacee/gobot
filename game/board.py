@@ -1,11 +1,7 @@
 import numpy as np
 from collections import deque
-from player import Player
-
-BLACK_STONE=1
-WHITE_STONE=-1
-EMPTY=0
-PASS=[]
+from .player import Human, Player
+from .stones import WHITE_STONE, BLACK_STONE, EMPTY, PASS
 
 class Board:
 
@@ -14,7 +10,7 @@ class Board:
         self._board: np.ndarray = np.array([[EMPTY] * self._board_size] * self._board_size)
         self._super_ko: bool = super_ko
         self._last_boards: list[np.ndarray] = []
-        self._players: deque[Player] = deque([Player(stone=BLACK_STONE), Player(stone=WHITE_STONE)])
+        self._players: deque[Player] = deque([Human(stone=BLACK_STONE), Human(stone=WHITE_STONE)])
         self._last_turn_induced_capture: bool = False
         self._captured_black_stones: int = 0
 
@@ -170,6 +166,3 @@ class Board:
         board = self._board[::,::]
         black_stones = np.sum((board == BLACK_STONE).astype(int)) + self._captured_black_stones
         return -1 if black_stones > 180 else 1
-
-    def __repr__(self):
-        return self.___repr__()
