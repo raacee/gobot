@@ -19,18 +19,11 @@ class Player(ABC):
 
 
 class Human(Player):
-    def choose_case(self, board) -> tuple[int, int]:
-        return tuple(
-            int(v) for v in input("Enter your move (row and column): ").split()[:2]
-        )
-
-
-class Bot(Player):
-    def __init__(self, stone: int) -> None:
-        super().__init__(stone)
-
-    def choose_case(self, board) -> tuple[int, int]:
-        return self._find_best_move(board)
-
-    def _find_best_move(self, board) -> tuple[int, int]:
-        raise NotImplementedError()
+    def choose_case(self) -> tuple[int, int] | None:
+        choice = input("Enter your move (row and column): ").split()[:2]
+        if choice == []:
+            return None
+        else:
+            return tuple(
+                int(v) for v in choice
+            )
