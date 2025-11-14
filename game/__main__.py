@@ -1,6 +1,7 @@
-from .board import Board
+from .game import Game
+from .board_sizes import SMALL_BOARD_SIZE
 
 
 if __name__ == '__main__':
-    board = Board(board_size=9)
-    board.game()
+    board = Game(board_size=SMALL_BOARD_SIZE)
+    board.play()
