@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from .stones import WHITE_STONE, BLACK_STONE
+from collections import deque
+from .stones import WHITE_STONE, BLACK_STONE, stone_names
 
 
 class Player(ABC):
@@ -8,6 +9,9 @@ class Player(ABC):
             raise ValueError("Stone must be black (-1) or white (1)")
         self.stone: int = stone
         self.name = "White" if stone == WHITE_STONE else "Black"
+
+    def __str__(self):
+        return stone_names[self.stone].__str__()
 
     @abstractmethod
     def choose_case(self, board) -> tuple[int, int]:

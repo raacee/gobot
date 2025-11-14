@@ -1,6 +1,16 @@
 BLACK_STONE = 1
 WHITE_STONE = -1
+BLACK_STR = "b"
+WHITE_STR = "w"
 EMPTY = 0
 WHITE_STONE_CHAR = "●"
 BLACK_STONE_CHAR = "○"
 EMPTY_CHAR = " "
+BLACK_NAME = "Black"
+WHITE_NAME = "White"
+PASS = None
+
+stone_names = {
+    BLACK_STONE : BLACK_NAME,
+    WHITE_STONE : WHITE_NAME
+}
