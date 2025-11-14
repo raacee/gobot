@@ -14,7 +14,7 @@ class Player(ABC):
         return stone_names[self.stone].__str__()
 
     @abstractmethod
-    def choose_case(self, board) -> tuple[int, int]:
+    def choose_case(self) -> tuple[int, int] | None:
         raise NotImplementedError()
 
 
