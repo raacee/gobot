@@ -27,11 +27,11 @@ class TestGames(unittest.TestCase):
         game = self.create_test_board(board_array, black_moves, white_moves)
         initial_board = game.get_board()
         # Both players pass without errors
-        game._game_iteration()
+        game.step()
         next_board = game.get_board()
         self.assertTrue(np.all(initial_board == next_board))
         with self.assertRaises(DoublePass):
-            game._game_iteration()
+            game.step()
             final_board = game.get_board()
             self.assertEqual(initial_board, next_board)
 
@@ -43,8 +43,8 @@ class TestGames(unittest.TestCase):
         white_moves = [(1, 1), None]
         board = self.create_test_board(board_array, black_moves, white_moves)
         # Both players make moves without errors
-        board._game_iteration()
-        board._game_iteration()
+        board.step()
+        board.step()
         self.assertEqual(board._board[0, 0], BLACK_STONE)
         self.assertEqual(board._board[1, 1], WHITE_STONE)
 
@@ -60,7 +60,7 @@ class TestGames(unittest.TestCase):
         white_moves = [None, None]
         board = self.create_test_board(board_array, black_moves, white_moves)
         # Black captures the white stone without errors
-        board._game_iteration()
+        board.step()
         self.assertEqual(board._board[1, 1], BLACK_STONE)
 
     def test_suicide(self):
@@ -74,8 +74,8 @@ class TestGames(unittest.TestCase):
         game = self.create_test_board(board_array, black_moves, white_moves)
         # White's move should raise an InducesSuicide exception
         with self.assertRaises(InducesSuicide):
-            game._game_iteration()
-            game._game_iteration()
+            game.step()
+            game.step()
 
     def test_suicide_capture(self):
         # Create a board with a white stone at (1, 1) and black stones at (0, 1) and (2, 1)
@@ -87,7 +87,7 @@ class TestGames(unittest.TestCase):
         board = self.create_test_board(board_array, black_moves, white_moves)
         # Black's move should capture the white stone without errors
         for _ in range(0, 6):
-            board._game_iteration()
+            board.step()
         self.assertEqual(board._board[0, 1], EMPTY)
 
     def test_ko_rule(self):
@@ -101,4 +101,4 @@ class TestGames(unittest.TestCase):
         # Black's move should capture the white stone without errors
         with self.assertRaises(BreakingKo):
             for _ in range(0, 7):
-                board._game_iteration()
+                board.step()

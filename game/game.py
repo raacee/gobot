@@ -48,7 +48,7 @@ class Game:
     def _check_ko(self, board:bytes) -> bool:
         return board in self._last_boards
 
-    def _game_iteration(self) -> None:
+    def step(self) -> None:
         # Begin new player turn
         current_player: Player = self._players[0]
         if self._display:
@@ -128,7 +128,7 @@ class Game:
     def play(self):
         while True:
             try:
-                self._game_iteration()
+                self.step()
             except InvalidMove as ime:
                 print(ime)
                 continue
